@@ -27,7 +27,7 @@ test  <- pjme %>%
   filter(Datetime > ymd_hms("2017-11-30 23:00:00"))
 
 firstHour    <- 24*(as.Date("2017-11-30 23:00:00")-as.Date("2017-01-01 00:00:00"))
-pjme_ts      <- msts(pjme$PJME_MW, start = c(2002,0), ts.frequency = 24*365.25, seasonal.periods = c(24,24*365.25))
+pjme_ts      <- msts(pjme$PJME_MW, start = c(2002,0), ts.frequency = 24*365.25, seasonal.periods = c(24,24*7,24*365.25))
 train_ts     <- msts(train$PJME_MW, start = c(2016,0), ts.frequency = 24*365.25, seasonal.periods = c(24,24*7,24*365.25))
 test_ts      <- msts(test$PJME_MW, start = c(2017,firstHour), ts.frequency = 24*365.25, seasonal.periods = c(24,24*7,24*365.25))
 
@@ -45,7 +45,6 @@ ggseasonplot(pjme_mini_ts, year.labels = TRUE, year.labels.left = TRUE) +
 # ============================================
 pjme_ts %>% mstl() %>% 
   autoplot() + xlab("Year")
-# Note the seasonal component is half of the magnitud of the daily and annual components
 
 # ====================
 # Stationarity check
