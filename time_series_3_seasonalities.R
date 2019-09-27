@@ -3,10 +3,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(tidyverse)
 library(ggfortify)
 library(lubridate)
-library(xts)
 library(forecast)
-library(zoo)
-library(tseries)
 library(urca)
 
 # Importing the data, and parsing to data
@@ -147,6 +144,28 @@ autoplot(train_ts) +
     guides(colour=guide_legend(title="Forecast")) +
     coord_cartesian(xlim = c(2017.94, 2018.6))
 
+# zoomed plot 1st week
+  autoplot(train_ts) + 
+    autolayer(test_ts, series="Test") +
+    fit %>% 
+    forecast(xreg=fourier(train_ts, K=c(12,2,4), h=24*245), level = 99) %>% 
+    autolayer(series="DHR", PI=FALSE, alpha=0.7) +
+    ggtitle("Dynamic Harmonic Regression (DHR) of Fist 168 hours of Energy Demand") +
+    xlab("Year") + ylab("Demand in MW") +
+    guides(colour=guide_legend(title="Forecast")) +
+    coord_cartesian(xlim = c(2017.94, 2017.96))
+  
+# zoomed plot last week
+  autoplot(train_ts) + 
+    autolayer(test_ts, series="Test") +
+    fit %>% 
+    forecast(xreg=fourier(train_ts, K=c(12,2,4), h=24*245), level = 99) %>% 
+    autolayer(series="DHR", PI=FALSE, alpha=0.7) +
+    ggtitle("Dynamic Harmonic Regression (DHR) of Last 168 hours of Energy Demand") +
+    xlab("Year") + ylab("Demand in MW") +
+    guides(colour=guide_legend(title="Forecast")) +
+    coord_cartesian(xlim = c(2018.56, 2018.58))
+  
 checkresiduals(fit)
 
 # ===========================
@@ -173,6 +192,26 @@ autoplot(train_ts) +
   xlab("Year") + ylab("Demand in MW") +
   guides(colour=guide_legend(title="Forecast")) +
   coord_cartesian(xlim = c(2017.94, 2018.6))
+
+# zoomed plot first week
+fc2 <- forecast(fit2, h=24*245, level = 80)
+autoplot(train_ts) +
+  autolayer(test_ts, series="Test") +
+  autolayer(fc2, series="TBATS", PI=FALSE, alpha=0.7) +
+  ggtitle("TBATS Power Demand forecast of First 168 hours") +
+  xlab("Year") + ylab("Demand in MW") +
+  guides(colour=guide_legend(title="Forecast")) +
+  coord_cartesian(xlim = c(2017.94, 2017.96))
+
+# Zoomed plot last week
+fc2 <- forecast(fit2, h=24*245, level = 80)
+autoplot(train_ts) +
+  autolayer(test_ts, series="Test") +
+  autolayer(fc2, series="TBATS", PI=FALSE, alpha=0.7) +
+  ggtitle("TBATS Power Demand forecast of Last 168 hours") +
+  xlab("Year") + ylab("Demand in MW") +
+  guides(colour=guide_legend(title="Forecast")) +
+  coord_cartesian(xlim = c(2018.56, 2018.58))
 
 
 checkresiduals(fit2)
